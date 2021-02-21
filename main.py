@@ -57,6 +57,14 @@ def add_classes(conn, className, classStartTime, classEndTime, classDays):
     ))
     conn.commit()
 
+def remove_classes(conn, className):
+    c = conn.cursor()
+    c.execute("DELETE FROM class_table WHERE className = '{0}')".format(
+        className
+    )) 
+    conn.commit()
+    
+
 def getTime():
     now = datetime.now()
     current_time = now.strftime("%H:%M")
@@ -104,6 +112,7 @@ def main():
         #splits in the time 3:00pm to an array ["3", "00pm"]
         formattedStart = formatTime(start)
         formattedEnd = formatTime(end)
+
 
         add_classes(conn,className, formattedStart, formattedEnd, days)
         read_classes(conn)
