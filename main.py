@@ -85,13 +85,15 @@ def getTime():
     current_day = datetime.today().weekday()
     return [current_time, current_day]
 
-def messageReminder():
-    pass
+
 
 
 def main():
     file = r"ClassReminderBot.db"
     table_name = 'Class'
+
+    create_db(file)                        # Creates database file 
+    create_table(file, table_name)         # Creates table within database
 
     conn = sqlite3.connect(file)
 
@@ -101,8 +103,6 @@ def main():
     #remove_classes(conn, 'COMP163')                                    // TESTING 
 
     print_classes(conn)
-    #create_db(file)                        // Creates database file 
-    #create_table(file, table_name)         // Creates table within database
 
     getTime()
 
@@ -117,12 +117,52 @@ def main():
         remindClass.start()
 
     # Bot announces hello every 10 seconds
-    @tasks.loop(minutes=1)
+    @tasks.loop(seconds=30)
     async def remindClass():
         channel = bot.get_channel(812874796018696215)
-        currentTime = getTime()
+        currentTime = getTime()[0]
+        currentDay = getTime()[1]
+        classRows = read_classes(conn)
+        
+        for className in classRows:
+            # string format ("15:00")
+            classTime = className[1].split(":")
 
-        #await channel.send()
+            # string format ("024")
+            classDay = className[3]
+
+            name = className[0]
+            
+            classHour = classTime[0]
+            classMinute = classTime[1]
+
+            if int(classMinute) >= 10:
+                tenMinBefore = '0' + str(classHour) + ':0' + str(int(classMinute) - 10)
+            else:
+                tenMinBefore = str(int(classHour) - 1) + ':' + str(int(classMinute) + 50)
+
+            if int(classMinute) >= 5:
+                fiveMinBefore = '0' + str(classHour) + ':' + str(int(classMinute) - 5)
+            else:
+                fiveMinBefore = str(int(classHour) - 1) + ':' + str(int(classMinute) + 55)
+
+            if str(currentDay) in classDay:
+                print("ClassName: {}".format(name))
+                print("Current Time is: {}, 10minbefore: {}".format(currentTime, tenMinBefore))
+                print("Current Time is: {}, 5minbefore: {}".format(currentTime, fiveMinBefore))
+                print("Current Time is equal to 10minbeforeclass: {}".format(currentTime == tenMinBefore))
+                print("Current Time is equal to 10minbeforeclass: {}".format(currentTime == fiveMinBefore))
+                print("currentime type: ".format(type(currentTime) is str))
+                print("fiveminbefore type: ".format(type(fiveMinBefore) is str))
+                if currentTime == tenMinBefore:
+                    await channel.send(name + " STARTS IN TEN MINUTES!")
+                if currentTime == fiveMinBefore:
+                    await channel.send(name + " STARTS IN FIVE MINUTES!!!")
+                if currentTime == classTime[1]:
+                    await channel.send(name + " STARTS RIGHT NOW!!!!!")
+
+
+        #await channel.send(currentDay)
 
 
     @bot.command(name='addclass', help='<classname> <8:00am> <9:15am> <MWF>')
@@ -135,7 +175,7 @@ def main():
         formattedStart = formatTime(classStartTime)
         formattedEnd = formatTime(classEndTime)
 
-        weekday = {"m": "0", "t": "1", "w": "2", "th": "3", "f": "4"}
+        weekday = {"m": "0", "t": "1", "w": "2", "th": "3", "f": "4", "s": "6"}
 
         classDays = classDays.lower()
         formattedDays = ""
