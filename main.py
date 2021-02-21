@@ -34,8 +34,16 @@ async def on_message(message):
         ),
     ]
 
+    help_menu = [
+        '!Add_Class <Name of Class> <Time>'
+    ]
+
     if message.content == '99!':
         response = random.choice(brooklyn_99_quotes)
+        await message.channel.send(response)
+
+    if message.content == '!help':
+        response = help_menu
         await message.channel.send(response)
 
 client.run(TOKEN)
