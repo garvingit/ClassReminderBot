@@ -62,7 +62,7 @@ def add_classes(conn, className, classStartTime, classEndTime, classDays):
 
 def remove_classes(conn, className):
     c = conn.cursor()
-    c.execute("DELETE FROM class_table WHERE className = '{0}')".format(
+    c.execute("DELETE FROM class_table WHERE className = '{0}'".format(
         className
     )) 
     conn.commit()
@@ -71,7 +71,8 @@ def remove_classes(conn, className):
 def getTime():
     now = datetime.now()
     current_time = now.strftime("%H:%M")
-    return ("Current Time: ", current_time)
+    current_day = datetime.today().weekday()
+    return ("Current Time: ", current_time, current_day)
 
 
 def main():
@@ -80,11 +81,14 @@ def main():
 
     conn = sqlite3.connect(file)
 
-    #add_classes(conn, "COMP137", "3:00pm", "5:00pm", "MWF")
-    read_classes(conn)
+    #add_classes(conn, "COMP137", "3:00pm", "5:00pm", "MWF")            // TESTING 
+    #read_classes(conn)                                                 // TESTING 
+    
+    #remove_classes(conn, 'COMP163')                                    // TESTING 
 
-    #create_db(file)
-    #create_table(file, table_name)
+    read_classes(conn)
+    #create_db(file)                        // Creates database file 
+    #create_table(file, table_name)         // Creates table within database
 
     getTime()
 
@@ -99,7 +103,7 @@ def main():
         test.start()
 
     # Bot announces hello every 10 seconds
-    @tasks.loop(seconds=5)
+    @tasks.loop(minutes=1)
     async def test():
         channel = bot.get_channel(812874796018696215)
        
