@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 
 import sqlite3
 from sqlite3 import Error
-
+bot = None
 def create_db(file):
     conn = None
     try:
@@ -61,10 +61,10 @@ def main():
 
     conn = sqlite3.connect(file)
 
-    add_classes(conn, "COMP137", "3:00pm", "5:00pm", "MWF")
+    #add_classes(conn, "COMP137", "3:00pm", "5:00pm", "MWF")
     read_classes(conn)
 
-    conn.close()
+    
 
     #create_db(file)
     #create_table(file, table_name)
@@ -78,28 +78,28 @@ def main():
     async def on_ready():
         print(f'{bot.user} has connected to Discord!')
 
-    @bot.command(name='addclass', help='Add Class to your Reminder Bot')
-    async def on_message(message, className, start, end, days):
-        #when the bot types this command, do nothing
-        if message.author == bot.user:
-            return
-
-        await message.channel.send('You passed {}, {}, {}, {}'.format(className, start, end, days))
-
     # Bot announces hello every 10 seconds
     @tasks.loop(seconds=10)
     async def test():
         channel = bot.get_channel(812874796018696215)
         await channel.send('hello')
 
+    @bot.command(name='addclass', help='Add Class to your Reminder Bot')
+    async def on_message(message, className, start, end, days):
+    #when the bot types this command, do nothing
+        if message.author == bot.user:
+            return
+
+        #splits in the time 3:00pm to an array ["3", "00pm"]
+        formattedStart = formatTime(start)
+        formattedEnd = formatTime(end)
+
+        add_classes(conn,className, formattedStart, formattedEnd, days)
+        read_classes(conn)
+
     bot.run(TOKEN)
 
-<<<<<<< HEAD
-    #splits in the time 3:00pm to an array ["3", "00pm"]
-    formattedStart = formatTime(start)
-    formattedEnd = formatTime(end)
-
-    await message.channel.send('You passed {}, {}, {}, {}'.format(className, start, end, days))
+    conn.close()
 
 def formatTime(time):
     """
@@ -123,11 +123,6 @@ def formatTime(time):
     
     return realtime
 
-#bot.run(TOKEN)
-
-formatTime("3:00am")
-=======
 
 if __name__ == '__main__':
     main()
->>>>>>> 3844ba474a6e653eeb278efb86312bf8918fd30e
