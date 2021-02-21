@@ -15,6 +15,9 @@ from dotenv import load_dotenv
 
 import sqlite3
 from sqlite3 import Error
+
+from datetime import datetime 
+
 bot = None
 def create_db(file):
     conn = None
@@ -55,6 +58,12 @@ def add_classes(conn, className, classStartTime, classEndTime, classDays):
     ))
     conn.commit()
 
+def getTime():
+    now = datetime.now()
+    current_time = now.strftime("%H:%M")
+    print("Current Time: ", current_time)
+
+
 def main():
     file = r"ClassReminderBot.db"
     table_name = 'Class'
@@ -64,10 +73,10 @@ def main():
     #add_classes(conn, "COMP137", "3:00pm", "5:00pm", "MWF")
     read_classes(conn)
 
-    
-
     #create_db(file)
     #create_table(file, table_name)
+
+    getTime()
 
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
