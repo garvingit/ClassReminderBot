@@ -12,15 +12,33 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+import sqlite3
+from sqlite3 import Error
+
+def create_db(file):
+    conn = None
+    try:
+        conn = sqlite3.connect(file)
+        print (sqlite3.version)
+    except Error as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
+
+
+file = r"ClassReminderBot.db"
+create_db(file)
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 client = discord.Client()
 bot = commands.Bot(command_prefix = '!')
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+    print(f'{bot.user} has connected to Discord!')
 
 @bot.command(name='AddClass', help='Add Class to your Reminder Bot')
 async def on_message(message):
