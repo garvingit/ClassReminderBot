@@ -26,9 +26,27 @@ def create_db(file):
         if conn:
             conn.close()
 
+def create_table(file, table_name):
+    conn = sqlite3.connect(file)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS class_table
+        (
+            className varchar(255) PRIMARY KEY NOT NULL,
+            classStartTime varchar(7),
+            classEndTime varchar(7),
+            classdays varchar(5)
+        )
+    """)
+    conn.commit()
+    conn.close()
 
 file = r"ClassReminderBot.db"
+table_name = 'Class'
 create_db(file)
+create_table(file, table_name)
+
+
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
