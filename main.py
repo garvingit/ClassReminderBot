@@ -65,4 +65,10 @@ async def on_message(message, className, start, end, days):
 
     await message.channel.send('You passed {}, {}, {}, {}'.format(className, start, end, days))
 
+# Bot announces hello every 10 seconds
+@tasks.loop(seconds=10)
+async def test():
+    channel = bot.get_channel(812874796018696215)
+    await channel.send('hello')
+
 bot.run(TOKEN)
