@@ -45,8 +45,6 @@ async def on_message(message):
     if message.content == '!help':
         response = help_menu
         await message.channel.send(response)
-
-    if message.content.startswith('!add'):
             
 
 client.run(TOKEN)
