@@ -50,6 +50,17 @@ def read_classes(conn):
     """
     c = conn.cursor()
     class_list = c.execute("SELECT * FROM class_table")
+    classes = []
+    for row in class_list:
+        classes.append(row)
+    return classes
+
+def print_classes(conn):
+    """
+    read the database line by line, currently prints the data should return it!!!! 
+    """
+    c = conn.cursor()
+    class_list = c.execute("SELECT * FROM class_table")
     for row in class_list:
         print (row)
     
@@ -72,7 +83,10 @@ def getTime():
     now = datetime.now()
     current_time = now.strftime("%H:%M")
     current_day = datetime.today().weekday()
-    return ("Current Time: ", current_time, current_day)
+    return [current_time, current_day]
+
+def messageReminder():
+    pass
 
 
 def main():
@@ -86,7 +100,7 @@ def main():
     
     #remove_classes(conn, 'COMP163')                                    // TESTING 
 
-    read_classes(conn)
+    print_classes(conn)
     #create_db(file)                        // Creates database file 
     #create_table(file, table_name)         // Creates table within database
 
@@ -100,14 +114,15 @@ def main():
     @bot.event
     async def on_ready():
         print(f'{bot.user} has connected to Discord!')
-        test.start()
+        remindClass.start()
 
     # Bot announces hello every 10 seconds
     @tasks.loop(minutes=1)
-    async def test():
+    async def remindClass():
         channel = bot.get_channel(812874796018696215)
-       
-        await channel.send(getTime())
+        currentTime = getTime()
+
+        #await channel.send()
 
 
     @bot.command(name='addclass', help='<classname> <8:00am> <9:15am> <MWF>')
