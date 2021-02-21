@@ -152,8 +152,22 @@ def main():
 
         read_classes(conn)## CAN DELETE THIS LINE JUST PRINTING OUT THE CLASSES TO SEE
 
+    @bot.command(name='removeclass', help='<classname> <8:00am> <9:15am> <MWF>')
+    async def on_message(message, className):
+    #when the bot types this command, do nothing
+        if message.author == bot.user:
+            return
+
+        channel = bot.get_channel(812874796018696215)
+        mention = message.author.mention
+        await channel.send(f"Deleted %s for {mention}" % className)
+        remove_classes(conn, className)
+
+        read_classes(conn)
+
     bot.run(TOKEN)
     conn.close()
+        
 
 def formatTime(time):
     """
