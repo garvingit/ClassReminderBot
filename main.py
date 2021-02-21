@@ -7,6 +7,7 @@ Description: Discord Bot that Alerts Users Class Times
 # bot.py
 import os
 import random
+import datetime
 
 import discord
 from discord.ext import commands
@@ -63,6 +64,34 @@ async def on_message(message, className, start, end, days):
     if message.author == bot.user:
         return
 
+    #splits in the time 3:00pm to an array ["3", "00pm"]
+    formattedStart = formatTime(start)
+    formattedEnd = formatTime(end)
+
     await message.channel.send('You passed {}, {}, {}, {}'.format(className, start, end, days))
 
-bot.run(TOKEN)
+def formatTime(time):
+    """
+    input: time would be a string like "3:00pm", "10:00am"
+    an array like ["3", "00", "pm"] and ["10", "00", "am"] would be processed
+    
+    return: 3:00pm would be return in a 24hr format to 15:00
+    """
+    #splits in the time 3:00pm to an array ["3", "00pm"]
+    timeSplit = time.split(":")
+    timeSplit.append(timeSplit[1][-2:])
+    timeSplit[1] = timeSplit[1][:-2]
+    realtime = ""
+
+    if timeSplit[2] == "pm":
+        realtime = str(int(timeSplit[0]) + 12)
+        realtime = realtime + ":" + timeSplit[1]
+    else:
+        """ otherwise its am"""
+        realtime = ':'.join(timeSplit[time] for time in range(2))
+    
+    return realtime
+
+#bot.run(TOKEN)
+
+formatTime("3:00am")
