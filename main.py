@@ -39,21 +39,12 @@ bot = commands.Bot(command_prefix = '!')
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
-@bot.command(name='Add_Class', help='Add Class to your Reminder Bot')
-async def on_message(message):
+@bot.command(name='addclass', help='Add Class to your Reminder Bot')
+async def on_message(message, className, start, end, days):
+    #when the bot types this command, do nothing
     if message.author == bot.user:
         return
 
-    brooklyn_99_quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        (
-            'Cool. Cool cool cool cool cool cool cool, '
-            'no doubt no doubt no doubt no doubt.'
-        ),
-    ]
-
-    response = random.choice(brooklyn_99_quotes)
-    await message.channel.send(response)
+    await message.channel.send('You passed {}, {}, {}, {}'.format(className, start, end, days))
 
 bot.run(TOKEN)
