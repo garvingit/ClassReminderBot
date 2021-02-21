@@ -45,6 +45,9 @@ def create_table(file, table_name):
     conn.close()
 
 def read_classes(conn):
+    """
+    read the database line by line, currently prints the data should return it!!!! 
+    """
     c = conn.cursor()
     class_list = c.execute("SELECT * FROM class_table")
     for row in class_list:
@@ -95,21 +98,34 @@ def main():
         await channel.send(getTime())
 
 
-    @bot.command(name='!addclass', help='<classname> <8:00am> <9:15am> <MWF>')
-    async def on_message(message, className, start, end, days):
+    @bot.command(name='addclass', help='<classname> <8:00am> <9:15am> <MWF>')
+    async def on_message(message, className, classStartTime, classEndTime, classDays):
     #when the bot types this command, do nothing
         if message.author == bot.user:
             return
 
         #splits in the time 3:00pm to an array ["3", "00pm"]
-        formattedStart = formatTime(start)
-        formattedEnd = formatTime(end)
+        formattedStart = formatTime(classStartTime)
+        formattedEnd = formatTime(classEndTime)
 
-        add_classes(conn,className, formattedStart, formattedEnd, days)
-        read_classes(conn)
+        weekday = {"m": "0", "t": "1", "w": "2", "th": "3", "f": "4"}
+
+        classDays = classDays.lower()
+        formattedDays = ""
+        for day in weekday:
+            if day == "t":
+                if classDays.count(day) == 2 or day in classDays:
+                    formattedDays += weekday[day]
+            else:
+                if day in classDays:
+                    formattedDays += weekday[day]
+        
+        #adding the classes to databse
+        add_classes(conn, className, formattedStart, formattedEnd, formattedDays)
+
+        read_classes(conn)## CAN DELETE THIS LINE JUST PRINTING OUT THE CLASSES TO SEE
 
     bot.run(TOKEN)
-
     conn.close()
 
 def formatTime(time):
