@@ -198,12 +198,18 @@ def main():
         if message.author == bot.user:
             return
 
+        classRows = read_classes(conn)
         channel = bot.get_channel(812874796018696215)
         mention = message.author.mention
-        await channel.send(f"Deleted %s for {mention}" % className)
-        remove_classes(conn, className)
+        if className in classRows[0]:
+            await channel.send(f"Deleted %s for {mention}" % className)
+            remove_classes(conn, className)
+            read_classes(conn)
 
-        read_classes(conn)
+        else:
+            await channel.send(f"{mention} this class doesn't exist!")
+            read_classes(conn)
+
 
     bot.run(TOKEN)
     conn.close()
