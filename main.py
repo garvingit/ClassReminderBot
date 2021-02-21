@@ -18,7 +18,6 @@ from sqlite3 import Error
 
 from datetime import datetime 
 
-bot = None
 def create_db(file):
     conn = None
     try:
@@ -61,7 +60,7 @@ def add_classes(conn, className, classStartTime, classEndTime, classDays):
 def getTime():
     now = datetime.now()
     current_time = now.strftime("%H:%M")
-    print("Current Time: ", current_time)
+    return ("Current Time: ", current_time)
 
 
 def main():
@@ -86,14 +85,17 @@ def main():
     @bot.event
     async def on_ready():
         print(f'{bot.user} has connected to Discord!')
+        test.start()
 
     # Bot announces hello every 10 seconds
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=5)
     async def test():
         channel = bot.get_channel(812874796018696215)
-        await channel.send('hello')
+       
+        await channel.send(getTime())
 
-    @bot.command(name='addclass', help='Add Class to your Reminder Bot')
+
+    @bot.command(name='!addclass', help='<classname> <8:00am> <9:15am> <MWF>')
     async def on_message(message, className, start, end, days):
     #when the bot types this command, do nothing
         if message.author == bot.user:
